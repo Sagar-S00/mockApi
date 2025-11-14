@@ -5,7 +5,7 @@ import { chatApi } from '../utils/api';
 import { ChatDetail, ChatMessage, ChatSummary } from '../types';
 
 export function AIChat() {
-  const { theme } = useApp();
+  const { theme, showToast } = useApp();
   const [chats, setChats] = useState<ChatSummary[]>([]);
   const [currentChat, setCurrentChat] = useState<ChatDetail | null>(null);
   const [message, setMessage] = useState('');
@@ -71,10 +71,10 @@ export function AIChat() {
     try {
       setLoading(true);
       await chatApi.apply(currentChat.id, { messageId: msg.id });
-      alert('Mock created successfully!');
+      showToast('Mock created successfully!', 'success');
     } catch (err) {
       console.error('Failed to apply mock suggestion:', err);
-      alert('Failed to create mock');
+      showToast('Failed to create mock', 'error');
     } finally {
       setLoading(false);
     }
@@ -85,17 +85,26 @@ export function AIChat() {
     setMessage('');
   };
 
-  const handleDeleteChat = async (chatId: string) => {
-    if (!confirm('Delete this chat?')) return;
+  const [chatPendingDelete, setChatPendingDelete] = useState<ChatSummary | null>(null);
+
+  const handleDeleteChat = (chat: ChatSummary) => {
+    setChatPendingDelete(chat);
+  };
+
+  const confirmDeleteChat = async () => {
+    if (!chatPendingDelete) return;
     try {
       setLoading(true);
-      await chatApi.delete(chatId, true);
-      if (currentChat?.id === chatId) {
+      await chatApi.delete(chatPendingDelete.id, true);
+      if (currentChat?.id === chatPendingDelete.id) {
         setCurrentChat(null);
       }
       await loadChats();
+      showToast('Chat deleted', 'success');
+      setChatPendingDelete(null);
     } catch (err) {
       console.error('Failed to delete chat:', err);
+      showToast('Failed to delete chat', 'error');
     } finally {
       setLoading(false);
     }
@@ -174,7 +183,7 @@ export function AIChat() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDeleteChat(chat.id);
+                      handleDeleteChat(chat);
                     }}
                     className="p-1 text-red-600 hover:bg-red-50 rounded ml-2"
                   >
@@ -215,24 +224,40 @@ export function AIChat() {
               <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>Loading chat...</p>
             </div>
           ) : !currentChat || currentChat.messages.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center">
-              <Sparkles className={`w-16 h-16 mb-4 ${isDark ? 'text-gray-600' : 'text-gray-400'}`} />
-              <h3 className="text-xl font-bold mb-2">Welcome to AI Assistant</h3>
-              <p className={`max-w-md ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                Describe the API behavior you want to mock, and the assistant will draft a complete
-                endpoint configuration for you.
-              </p>
-              <div className={`mt-6 space-y-2 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                <p className="font-medium flex items-center justify-center space-x-1">
-                  <Info className="w-4 h-4" />
-                  <span>Try asking:</span>
-                </p>
-                <ul className="space-y-1">
-                  <li>"Create a user registration endpoint that returns a JWT token"</li>
-                  <li>"I need a failed payment response with error codes"</li>
-                  <li>"Mock a paginated product list with metadata"</li>
-                </ul>
-              </div>
+            <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
+              {loading ? (
+                <>
+                  <div className="flex items-center space-x-3">
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                    <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+                      Assistant is drafting a mock for you...
+                    </span>
+                  </div>
+                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    This may take a few seconds.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <Sparkles className={`w-16 h-16 ${isDark ? 'text-gray-600' : 'text-gray-400'}`} />
+                  <h3 className="text-xl font-bold">Welcome to AI Assistant</h3>
+                  <p className={`max-w-md ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Describe the API behavior you want to mock, and the assistant will draft a complete
+                    endpoint configuration for you.
+                  </p>
+                  <div className={`mt-6 space-y-2 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <p className="font-medium flex items-center justify-center space-x-1">
+                      <Info className="w-4 h-4" />
+                      <span>Try asking:</span>
+                    </p>
+                    <ul className="space-y-1">
+                      <li>"Create a user registration endpoint that returns a JWT token"</li>
+                      <li>"I need a failed payment response with error codes"</li>
+                      <li>"Mock a paginated product list with metadata"</li>
+                    </ul>
+                  </div>
+                </>
+              )}
             </div>
           ) : (
             <>
@@ -358,6 +383,43 @@ export function AIChat() {
           </p>
         </div>
       </div>
+      {chatPendingDelete && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
+          <div
+            className={`w-full max-w-md rounded-2xl shadow-2xl border ${
+              isDark ? 'bg-gray-800 text-white border-gray-700' : 'bg-white text-gray-900 border-gray-200'
+            }`}
+          >
+            <div className="p-6 space-y-4">
+              <h3 className="text-lg font-semibold">Delete chat?</h3>
+              <p className="text-sm leading-relaxed">
+                This will remove{' '}
+                <span className="font-medium">
+                  {chatPendingDelete.title || 'this conversation'}
+                </span>{' '}
+                and all of its messages permanently.
+              </p>
+              <div className="flex justify-end space-x-3 pt-2">
+                <button
+                  onClick={() => setChatPendingDelete(null)}
+                  className={`px-4 py-2 rounded-lg ${
+                    isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'
+                  }`}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteChat}
+                  disabled={loading}
+                  className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white disabled:opacity-60"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

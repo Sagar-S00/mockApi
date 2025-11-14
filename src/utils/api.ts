@@ -10,12 +10,30 @@ import {
 } from '../types';
 
 const API_BASE = 'https://d1-template.trl0z2le.workers.dev';
+const CLIENT_TOKEN_KEY = 'mockforgeClientId';
+
+export function getClientToken(): string {
+  if (typeof window === 'undefined') {
+    return 'server-token';
+  }
+  let token = localStorage.getItem(CLIENT_TOKEN_KEY);
+  if (!token) {
+    if (crypto?.randomUUID) {
+      token = crypto.randomUUID();
+    } else {
+      token = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
+    localStorage.setItem(CLIENT_TOKEN_KEY, token);
+  }
+  return token;
+}
 
 async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      'X-Client-Token': getClientToken(),
       ...(options?.headers ?? {}),
     },
   });

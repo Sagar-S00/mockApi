@@ -2,7 +2,7 @@ import { useApp } from '../contexts/AppContext';
 import { LayoutDashboard, Database, Sparkles, TestTube, Moon, Sun, Activity } from 'lucide-react';
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { currentView, setCurrentView, theme, toggleTheme } = useApp();
+  const { currentView, setCurrentView, theme, toggleTheme, toast, dismissToast } = useApp();
 
   const navItems = [
     { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
@@ -13,7 +13,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen relative ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <nav className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -65,6 +65,35 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>
+      {toast && (
+        <div className="fixed top-4 right-4 z-50">
+          <div
+            className={`px-4 py-3 rounded-lg shadow-2xl border flex items-start space-x-3 ${
+              toast.type === 'success'
+                ? theme === 'dark'
+                  ? 'bg-green-700 border-green-500 text-white'
+                  : 'bg-green-50 border-green-200 text-green-900'
+                : toast.type === 'error'
+                  ? theme === 'dark'
+                    ? 'bg-red-700 border-red-500 text-white'
+                    : 'bg-red-50 border-red-200 text-red-900'
+                  : theme === 'dark'
+                    ? 'bg-gray-800 border-gray-600 text-white'
+                    : 'bg-white border-gray-200 text-gray-900'
+            }`}
+          >
+            <div className="flex-1 text-sm">{toast.message}</div>
+            <button
+              onClick={dismissToast}
+              className={`text-xs font-medium ${
+                theme === 'dark' ? 'text-white hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

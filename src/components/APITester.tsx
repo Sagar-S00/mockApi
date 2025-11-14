@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { Play, Copy, Clock, FileText, Link, Plus, Trash2 } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { RequestLog } from '../types';
+import { getClientToken } from '../utils/api';
 
 const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'];
 
 export function APITester() {
-  const { theme, testerPreset, setTesterPreset } = useApp();
+  const { theme, testerPreset, setTesterPreset, showToast } = useApp();
   const [method, setMethod] = useState('GET');
   const [path, setPath] = useState('/mock/');
   const [requestHeaders, setRequestHeaders] = useState<Array<{ key: string; value: string }>>([
@@ -62,7 +63,13 @@ export function APITester() {
         options.body = requestBody;
       }
 
-      const res = await fetch(`${apiBase}${path}`, options);
+      const res = await fetch(`${apiBase}${path}`, {
+        ...options,
+        headers: {
+          ...options.headers,
+          'X-Client-Token': getClientToken(),
+        },
+      });
       const executionTime = Date.now() - startTime;
 
       const responseHeaders: Record<string, string> = {};
@@ -113,13 +120,13 @@ export function APITester() {
       curl += ` \\\n  -d '${requestBody}'`;
     }
     navigator.clipboard.writeText(curl);
-    alert('Copied to clipboard!');
+    showToast('cURL command copied', 'success');
   };
 
   const handleCopyFullUrl = () => {
     const targetUrl = `${apiBase}${path}`;
     navigator.clipboard.writeText(targetUrl);
-    alert('Full URL copied to clipboard!');
+    showToast('Full URL copied', 'info');
   };
 
   const loadFromHistory = (log: RequestLog) => {

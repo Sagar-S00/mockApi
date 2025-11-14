@@ -5,7 +5,7 @@ import { mockApi } from '../utils/api';
 import { Mock } from '../types';
 
 export function MockLibrary() {
-  const { theme, setCurrentView, setEditingMockId, setTesterPreset } = useApp();
+  const { theme, setCurrentView, setEditingMockId, setTesterPreset, showToast } = useApp();
   const [mocks, setMocks] = useState<Mock[]>([]);
   const [filteredMocks, setFilteredMocks] = useState<Mock[]>([]);
   const [loading, setLoading] = useState(true);
@@ -13,6 +13,8 @@ export function MockLibrary() {
   const [methodFilter, setMethodFilter] = useState<string>('ALL');
   const [selectedMocks, setSelectedMocks] = useState<Set<string>>(new Set());
   const [showFilters, setShowFilters] = useState(false);
+  const [pendingDeleteMock, setPendingDeleteMock] = useState<Mock | null>(null);
+  const [pendingBulkDelete, setPendingBulkDelete] = useState(false);
 
   useEffect(() => {
     loadMocks();
@@ -51,14 +53,20 @@ export function MockLibrary() {
     setFilteredMocks(filtered);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this mock?')) return;
+  const handleDelete = (mock: Mock) => {
+    setPendingDeleteMock(mock);
+  };
 
+  const confirmDeleteMock = async () => {
+    if (!pendingDeleteMock) return;
     try {
-      await mockApi.delete(id);
+      await mockApi.delete(pendingDeleteMock.id);
+      showToast('Mock deleted', 'success');
+      setPendingDeleteMock(null);
       await loadMocks();
     } catch (err) {
       console.error('Failed to delete mock:', err);
+      showToast('Failed to delete mock', 'error');
     }
   };
 
@@ -188,17 +196,23 @@ export function MockLibrary() {
     setSelectedMocks(newSelected);
   };
 
-  const handleBulkDelete = async () => {
-    if (!confirm(`Delete ${selectedMocks.size} selected mocks?`)) return;
+  const handleBulkDelete = () => {
+    if (!selectedMocks.size) return;
+    setPendingBulkDelete(true);
+  };
 
+  const confirmBulkDelete = async () => {
     try {
       for (const id of selectedMocks) {
         await mockApi.delete(id);
       }
+      showToast('Selected mocks deleted', 'success');
       setSelectedMocks(new Set());
+      setPendingBulkDelete(false);
       await loadMocks();
     } catch (err) {
       console.error('Failed to delete mocks:', err);
+      showToast('Failed to delete selected mocks', 'error');
     }
   };
 
@@ -217,6 +231,7 @@ export function MockLibrary() {
   const isDark = theme === 'dark';
 
   return (
+    <>
     <div className={`${isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} rounded-lg shadow-lg p-6`}>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Mock Library</h2>
@@ -409,11 +424,11 @@ export function MockLibrary() {
                       >
                         <Copy className="w-4 h-4" />
                       </button>
-                      <button
-                        onClick={() => handleDelete(mock.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded"
-                        title="Delete"
-                      >
+                    <button
+                      onClick={() => handleDelete(mock)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded"
+                      title="Delete"
+                    >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -425,5 +440,73 @@ export function MockLibrary() {
         </div>
       )}
     </div>
+
+    {pendingDeleteMock && (
+      <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
+        <div
+          className={`w-full max-w-md rounded-2xl shadow-2xl border ${
+            isDark ? 'bg-gray-800 text-white border-gray-700' : 'bg-white text-gray-900 border-gray-200'
+          }`}
+        >
+          <div className="p-6 space-y-4">
+            <h3 className="text-lg font-semibold">Delete mock?</h3>
+            <p className="text-sm leading-relaxed">
+              This will permanently delete <span className="font-medium">{pendingDeleteMock.name}</span>.
+            </p>
+            <div className="flex justify-end space-x-3 pt-2">
+              <button
+                onClick={() => setPendingDeleteMock(null)}
+                className={`px-4 py-2 rounded-lg ${
+                  isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'
+                }`}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteMock}
+                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {pendingBulkDelete && (
+      <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
+        <div
+          className={`w-full max-w-md rounded-2xl shadow-2xl border ${
+            isDark ? 'bg-gray-800 text-white border-gray-700' : 'bg-white text-gray-900 border-gray-200'
+          }`}
+        >
+          <div className="p-6 space-y-4">
+            <h3 className="text-lg font-semibold">Delete selected mocks?</h3>
+            <p className="text-sm leading-relaxed">
+              This will permanently remove {selectedMocks.size} mock{selectedMocks.size === 1 ? '' : 's'}. This action
+              cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3 pt-2">
+              <button
+                onClick={() => setPendingBulkDelete(false)}
+                className={`px-4 py-2 rounded-lg ${
+                  isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'
+                }`}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmBulkDelete}
+                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

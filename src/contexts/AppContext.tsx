@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useRef, useState, ReactNode } from 'react';
 
 type View = 'dashboard' | 'mocks' | 'designer' | 'chat' | 'tester';
 
@@ -7,6 +7,14 @@ export interface TesterPreset {
   path: string;
   headers?: Array<{ key: string; value: string }>;
   body?: string;
+}
+
+type ToastType = 'info' | 'success' | 'error';
+
+interface ToastState {
+  id: number;
+  message: string;
+  type: ToastType;
 }
 
 interface AppContextType {
@@ -18,6 +26,9 @@ interface AppContextType {
   toggleTheme: () => void;
   testerPreset: TesterPreset | null;
   setTesterPreset: (preset: TesterPreset | null) => void;
+  showToast: (message: string, type?: ToastType) => void;
+  dismissToast: () => void;
+  toast: ToastState | null;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -27,9 +38,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [editingMockId, setEditingMockId] = useState<string | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [testerPreset, setTesterPreset] = useState<TesterPreset | null>(null);
+  const [toast, setToast] = useState<ToastState | null>(null);
+  const toastTimeout = useRef<number | undefined>();
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
+
+  const dismissToast = () => {
+    setToast(null);
+    if (toastTimeout.current) {
+      window.clearTimeout(toastTimeout.current);
+      toastTimeout.current = undefined;
+    }
+  };
+
+  const showToast = (message: string, type: ToastType = 'info') => {
+    if (toastTimeout.current) {
+      window.clearTimeout(toastTimeout.current);
+    }
+    const entry: ToastState = { id: Date.now(), message, type };
+    setToast(entry);
+    toastTimeout.current = window.setTimeout(() => {
+      setToast(current => (current?.id === entry.id ? null : current));
+      toastTimeout.current = undefined;
+    }, 3500);
   };
 
   return (
@@ -42,6 +75,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       toggleTheme,
       testerPreset,
       setTesterPreset,
+      showToast,
+      toast,
+      dismissToast,
     }}>
       {children}
     </AppContext.Provider>
