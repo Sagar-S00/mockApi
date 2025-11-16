@@ -148,7 +148,7 @@ export function APITester() {
 
   return (
     <div className="grid grid-cols-12 gap-6">
-      <div className={`col-span-8 ${isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} rounded-lg shadow-lg p-6`}>
+      <div className={`col-span-8 ${isDark ? 'bg-gray-800 text-white shadow-[0_0_40px_rgba(0,0,0,0.8)]' : 'bg-white text-gray-900 shadow-[0_0_40px_rgba(0,0,0,0.2)]'} rounded-lg p-6`}>
         <h2 className="text-2xl font-bold mb-6">API Tester</h2>
 
         <div className="space-y-4">
@@ -270,7 +270,7 @@ export function APITester() {
           )}
 
           {response && (
-            <div className={`mt-6 p-4 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
+            <div className={`mt-6 p-4 rounded-lg border ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-bold">Response</h3>
                 <div className="flex items-center space-x-4">
@@ -286,7 +286,7 @@ export function APITester() {
 
               <div className="mb-4">
                 <h4 className="text-sm font-medium mb-2">Headers</h4>
-                <div className={`p-3 rounded text-xs font-mono ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+                <div className={`p-3 rounded text-xs font-mono border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
                   {Object.entries(response.headers).map(([key, value]) => (
                     <div key={key}>
                       <span className="text-blue-600">{key}</span>: {value}
@@ -297,8 +297,8 @@ export function APITester() {
 
               <div>
                 <h4 className="text-sm font-medium mb-2">Body</h4>
-                <pre className={`p-3 rounded text-xs font-mono overflow-x-auto ${
-                  isDark ? 'bg-gray-800' : 'bg-white'
+                <pre className={`p-3 rounded text-xs font-mono overflow-x-auto border ${
+                  isDark ? 'border-gray-700' : 'border-gray-200'
                 }`}>
                   {response.body}
                 </pre>
@@ -308,7 +308,7 @@ export function APITester() {
         </div>
       </div>
 
-      <div className={`col-span-4 ${isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} rounded-lg shadow-lg p-6`}>
+      <div className={`col-span-4 ${isDark ? 'bg-gray-800 text-white shadow-[0_0_40px_rgba(0,0,0,0.8)]' : 'bg-white text-gray-900 shadow-[0_0_40px_rgba(0,0,0,0.2)]'} rounded-lg p-6`}>
         <h3 className="font-bold mb-4">Request History</h3>
         <div className="space-y-2">
           {history.length === 0 ? (
@@ -320,8 +320,8 @@ export function APITester() {
               <button
                 key={idx}
                 onClick={() => loadFromHistory(log)}
-                className={`w-full text-left p-3 rounded-lg ${
-                  isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:bg-gray-100'
+                className={`w-full text-left p-3 rounded-lg border ${
+                  isDark ? 'border-gray-600 hover:border-gray-500' : 'border-gray-300 hover:border-gray-400'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">

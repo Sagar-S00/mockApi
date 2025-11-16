@@ -232,7 +232,7 @@ export function MockLibrary() {
 
   return (
     <>
-    <div className={`${isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} rounded-lg shadow-lg p-6`}>
+    <div className={`${isDark ? 'bg-gray-800 text-white shadow-[0_0_40px_rgba(0,0,0,0.8)]' : 'bg-white text-gray-900 shadow-[0_0_40px_rgba(0,0,0,0.2)]'} rounded-lg p-6`}>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Mock Library</h2>
         <div className="flex space-x-2">
@@ -295,7 +295,7 @@ export function MockLibrary() {
         </div>
 
         {showFilters && (
-          <div className={`p-4 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
+          <div className={`p-4 rounded-lg border ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
             <label className="block text-sm font-medium mb-2">HTTP Method</label>
             <select
               value={methodFilter}
@@ -317,8 +317,8 @@ export function MockLibrary() {
       </div>
 
       {selectedMocks.size > 0 && (
-        <div className={`mb-4 p-4 rounded-lg flex justify-between items-center ${
-          isDark ? 'bg-blue-900' : 'bg-blue-50'
+        <div className={`mb-4 p-4 rounded-lg flex justify-between items-center border ${
+          isDark ? 'border-blue-700' : 'border-blue-300'
         }`}>
           <span>{selectedMocks.size} mock(s) selected</span>
           <button
@@ -347,7 +347,7 @@ export function MockLibrary() {
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className={`${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
+            <thead className={`border-b ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
               <tr>
                 <th className="px-4 py-3 text-left">
                   <input
@@ -373,7 +373,7 @@ export function MockLibrary() {
             </thead>
             <tbody className={`${isDark ? 'divide-gray-700' : 'divide-gray-200'} divide-y`}>
               {filteredMocks.map((mock) => (
-                <tr key={mock.id} className={isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}>
+                <tr key={mock.id} className={`border-b ${isDark ? 'border-gray-700 hover:bg-gray-750' : 'border-gray-200 hover:bg-gray-50'}`}>
                   <td className="px-4 py-3">
                     <input
                       type="checkbox"
@@ -444,8 +444,8 @@ export function MockLibrary() {
     {pendingDeleteMock && (
       <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
         <div
-          className={`w-full max-w-md rounded-2xl shadow-2xl border ${
-            isDark ? 'bg-gray-800 text-white border-gray-700' : 'bg-white text-gray-900 border-gray-200'
+          className={`w-full max-w-md rounded-2xl border ${
+            isDark ? 'bg-gray-800 text-white border-gray-700 shadow-[0_0_50px_rgba(0,0,0,0.9)]' : 'bg-white text-gray-900 border-gray-200 shadow-[0_0_50px_rgba(0,0,0,0.3)]'
           }`}
         >
           <div className="p-6 space-y-4">
@@ -477,8 +477,8 @@ export function MockLibrary() {
     {pendingBulkDelete && (
       <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
         <div
-          className={`w-full max-w-md rounded-2xl shadow-2xl border ${
-            isDark ? 'bg-gray-800 text-white border-gray-700' : 'bg-white text-gray-900 border-gray-200'
+          className={`w-full max-w-md rounded-2xl border ${
+            isDark ? 'bg-gray-800 text-white border-gray-700 shadow-[0_0_50px_rgba(0,0,0,0.9)]' : 'bg-white text-gray-900 border-gray-200 shadow-[0_0_50px_rgba(0,0,0,0.3)]'
           }`}
         >
           <div className="p-6 space-y-4">

@@ -209,7 +209,7 @@ export function MockDesigner() {
   const isDark = theme === 'dark';
 
   return (
-    <div className={`${isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} rounded-lg shadow-lg p-6`}>
+    <div className={`${isDark ? 'bg-gray-800 text-white shadow-[0_0_40px_rgba(0,0,0,0.8)]' : 'bg-white text-gray-900 shadow-[0_0_40px_rgba(0,0,0,0.2)]'} rounded-lg p-6`}>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">
           {editingMockId ? 'Edit Mock' : 'Create New Mock'}
@@ -310,7 +310,7 @@ export function MockDesigner() {
             </button>
           </div>
           {showTokenHelper && (
-            <div className={`mb-2 p-3 rounded-lg text-sm ${isDark ? 'bg-gray-700' : 'bg-blue-50'}`}>
+            <div className={`mb-2 p-3 rounded-lg text-sm border ${isDark ? 'border-gray-600' : 'border-blue-300'}`}>
               <p className="font-medium mb-2">Available Dynamic Tokens:</p>
               <div className="space-y-1">
                 {[
@@ -404,7 +404,7 @@ export function MockDesigner() {
           />
         </div>
 
-        <div className={`p-4 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
+        <div className={`p-4 rounded-lg border ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
           <h3 className="font-medium mb-4">Match Conditions (Optional)</h3>
 
           <div className="space-y-4">

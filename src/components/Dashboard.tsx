@@ -44,8 +44,8 @@ export function Dashboard() {
     return (
       <div
         className={`${
-          isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
-        } rounded-lg shadow-lg p-6`}
+          isDark ? 'bg-gray-800 text-white shadow-[0_0_40px_rgba(0,0,0,0.8)]' : 'bg-white text-gray-900 shadow-[0_0_40px_rgba(0,0,0,0.2)]'
+        } rounded-lg p-6`}
       >
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -56,11 +56,11 @@ export function Dashboard() {
   }
 
   const cardClass = isDark
-    ? 'bg-gray-800 border border-gray-700 shadow-lg'
-    : 'bg-white border border-gray-200 shadow-xl';
+    ? 'bg-gray-800 border border-gray-700 shadow-[0_0_40px_rgba(0,0,0,0.8)]'
+    : 'bg-white border border-gray-200 shadow-[0_0_40px_rgba(0,0,0,0.2)]';
   const panelClass = isDark
-    ? 'bg-gray-800 border border-gray-700 shadow-lg'
-    : 'bg-white border border-gray-200 shadow-xl';
+    ? 'bg-gray-800 border border-gray-700 shadow-[0_0_40px_rgba(0,0,0,0.8)]'
+    : 'bg-white border border-gray-200 shadow-[0_0_40px_rgba(0,0,0,0.2)]';
 
   return (
     <div className="space-y-6">
@@ -132,7 +132,7 @@ export function Dashboard() {
               {stats.topMocks.slice(0, 5).map((mock, idx) => (
                 <div
                   key={mock.mockId}
-                  className={`p-4 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}
+                  className={`p-4 rounded-lg border ${isDark ? 'border-gray-600' : 'border-gray-300'}`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
@@ -178,7 +178,7 @@ export function Dashboard() {
               {stats.recentRequests.slice(0, 10).map((req, idx) => (
                 <div
                   key={`${req.mockId}-${req.timestamp}-${idx}`}
-                  className={`p-3 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}
+                  className={`p-3 rounded-lg border ${isDark ? 'border-gray-600' : 'border-gray-300'}`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3 flex-1 min-w-0">
@@ -224,8 +224,8 @@ export function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
             onClick={() => setCurrentView('designer')}
-            className={`p-4 rounded-lg text-left ${
-              isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
+            className={`p-4 rounded-lg text-left border transition-colors ${
+              isDark ? 'border-gray-600 hover:border-gray-500' : 'border-gray-300 hover:border-gray-400'
             }`}
           >
             <Database className="w-8 h-8 text-blue-600 mb-2" />
@@ -237,8 +237,8 @@ export function Dashboard() {
 
           <button
             onClick={() => setCurrentView('chat')}
-            className={`p-4 rounded-lg text-left ${
-              isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
+            className={`p-4 rounded-lg text-left border transition-colors ${
+              isDark ? 'border-gray-600 hover:border-gray-500' : 'border-gray-300 hover:border-gray-400'
             }`}
           >
             <MessageSquare className="w-8 h-8 text-purple-600 mb-2" />
@@ -250,8 +250,8 @@ export function Dashboard() {
 
           <button
             onClick={() => setCurrentView('tester')}
-            className={`p-4 rounded-lg text-left ${
-              isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
+            className={`p-4 rounded-lg text-left border transition-colors ${
+              isDark ? 'border-gray-600 hover:border-gray-500' : 'border-gray-300 hover:border-gray-400'
             }`}
           >
             <Activity className="w-8 h-8 text-green-600 mb-2" />

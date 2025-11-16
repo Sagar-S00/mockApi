@@ -68,7 +68,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       {toast && (
         <div className="fixed top-4 right-4 z-50">
           <div
-            className={`px-4 py-3 rounded-lg shadow-2xl border flex items-start space-x-3 ${
+            className={`px-4 py-3 rounded-lg border flex items-start space-x-3 ${
+              theme === 'dark' ? 'shadow-[0_0_50px_rgba(0,0,0,0.9)]' : 'shadow-[0_0_50px_rgba(0,0,0,0.3)]'
+            } ${
               toast.type === 'success'
                 ? theme === 'dark'
                   ? 'bg-green-700 border-green-500 text-white'

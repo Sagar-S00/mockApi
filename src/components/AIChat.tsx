@@ -131,8 +131,8 @@ export function AIChat() {
   const isDark = theme === 'dark';
 
   const panelClass = isDark
-    ? 'bg-gray-800 border border-gray-700 shadow-lg'
-    : 'bg-white border border-gray-200 shadow-xl';
+    ? 'bg-gray-800 border border-gray-700 shadow-[0_0_40px_rgba(0,0,0,0.8)]'
+    : 'bg-white border border-gray-200 shadow-[0_0_40px_rgba(0,0,0,0.2)]';
 
   return (
     <div className="grid grid-cols-12 gap-6 h-[calc(100vh-12rem)]">
@@ -158,14 +158,14 @@ export function AIChat() {
               chats.map((chat) => (
                 <div
                   key={chat.id}
-                  className={`p-3 rounded-lg cursor-pointer flex justify-between items-start ${
+                  className={`p-3 rounded-lg cursor-pointer flex justify-between items-start border ${
                     currentChat?.id === chat.id
                       ? isDark
-                        ? 'bg-blue-900'
-                        : 'bg-blue-50'
+                        ? 'border-blue-700 bg-blue-900/20'
+                        : 'border-blue-300 bg-blue-50/50'
                       : isDark
-                        ? 'hover:bg-gray-700'
-                        : 'hover:bg-gray-50'
+                        ? 'border-gray-700 hover:border-gray-600'
+                        : 'border-gray-200 hover:border-gray-300'
                   }`}
                   onClick={() => handleSelectChat(chat)}
                 >
@@ -271,8 +271,8 @@ export function AIChat() {
                       msg.role === 'user'
                         ? 'bg-blue-600 text-white'
                         : isDark
-                          ? 'bg-gray-700 text-gray-100'
-                          : 'bg-gray-100 text-gray-900'
+                          ? 'border border-gray-600 text-gray-100'
+                          : 'border border-gray-300 text-gray-900'
                     }`}
                   >
                     <p className="whitespace-pre-wrap">{renderMessageText(msg)}</p>
@@ -290,8 +290,8 @@ export function AIChat() {
 
                     {msg.mockSuggestion && (
                       <div
-                        className={`mt-4 p-4 rounded ${
-                          isDark ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'
+                        className={`mt-4 p-4 rounded border ${
+                          isDark ? 'border-gray-700 text-gray-100' : 'border-gray-400 text-gray-900'
                         }`}
                       >
                         <div className="flex justify-between items-start mb-2">
@@ -306,8 +306,8 @@ export function AIChat() {
                           </button>
                         </div>
                         <pre
-                          className={`text-xs p-3 rounded overflow-x-auto ${
-                            isDark ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'
+                          className={`text-xs p-3 rounded overflow-x-auto border ${
+                            isDark ? 'border-gray-700 text-gray-100' : 'border-gray-300 text-gray-900'
                           }`}
                         >
                           {JSON.stringify(msg.mockSuggestion, null, 2)}
@@ -331,7 +331,7 @@ export function AIChat() {
               ))}
               {loading && (
                 <div className="flex justify-start">
-                  <div className={`rounded-lg p-4 ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <div className={`rounded-lg p-4 border ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
                     <div className="flex space-x-2">
                       <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
                       <div
@@ -385,11 +385,11 @@ export function AIChat() {
       </div>
       {chatPendingDelete && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
-          <div
-            className={`w-full max-w-md rounded-2xl shadow-2xl border ${
-              isDark ? 'bg-gray-800 text-white border-gray-700' : 'bg-white text-gray-900 border-gray-200'
-            }`}
-          >
+        <div
+          className={`w-full max-w-md rounded-2xl border ${
+            isDark ? 'bg-gray-800 text-white border-gray-700 shadow-[0_0_50px_rgba(0,0,0,0.9)]' : 'bg-white text-gray-900 border-gray-200 shadow-[0_0_50px_rgba(0,0,0,0.3)]'
+          }`}
+        >
             <div className="p-6 space-y-4">
               <h3 className="text-lg font-semibold">Delete chat?</h3>
               <p className="text-sm leading-relaxed">
