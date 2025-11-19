@@ -9,7 +9,7 @@ import {
   Stats,
 } from '../types';
 
-const API_BASE = 'https://d1-template.trl0z2le.workers.dev';
+const API_BASE = "https://mockapi.ainz.live";
 const CLIENT_TOKEN_KEY = 'mockforgeClientId';
 
 export function getClientToken(): string {
